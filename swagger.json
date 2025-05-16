@@ -1,0 +1,301 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Fundoo Notes API",
+    "version": "1.0.0",
+    "description": "API documentation for Fundoo Notes app"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000",
+      "description": "Local server"
+    }
+  ],
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ],
+  "paths": {
+    "/api/users/signup": {
+      "post": {
+        "tags": ["User"],
+        "summary": "User signup",
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserSignup"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "User created successfully"
+          },
+          "400": {
+            "description": "Invalid input"
+          }
+        }
+      }
+    },
+    "/api/users/login": {
+      "post": {
+        "tags": ["User"],
+        "summary": "User login",
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserLogin"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Login successful, returns JWT token"
+          },
+          "401": {
+            "description": "Invalid credentials"
+          }
+        }
+      }
+    },
+    "/api/notes": {
+      "get": {
+        "tags": ["Notes"],
+        "summary": "Get all notes of logged in user",
+        "responses": {
+          "200": {
+            "description": "List of notes",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Note"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid or missing token"
+          }
+        }
+      },
+      "post": {
+        "tags": ["Notes"],
+        "summary": "Create a new note",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NoteInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Note created successfully"
+          },
+          "401": {
+            "description": "Unauthorized - Invalid or missing token"
+          }
+        }
+      }
+    },
+    "/api/notes/{id}": {
+      "get": {
+        "tags": ["Notes"],
+        "summary": "Get note by ID",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Note ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Note details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Note"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Note not found"
+          }
+        }
+      },
+      "put": {
+        "tags": ["Notes"],
+        "summary": "Update note by ID",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Note ID"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NoteInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Note updated successfully"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Note not found"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Notes"],
+        "summary": "Delete note by ID",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Note ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Note deleted successfully"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Note not found"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "UserSignup": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "Sahil Moghaiz"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "sahil@example.com"
+          },
+          "password": {
+            "type": "string",
+            "format": "password",
+            "example": "yourStrongPassword123"
+          }
+        },
+        "required": ["name", "email", "password"]
+      },
+      "UserLogin": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "sahil@example.com"
+          },
+          "password": {
+            "type": "string",
+            "format": "password",
+            "example": "yourStrongPassword123"
+          }
+        },
+        "required": ["email", "password"]
+      },
+      "Note": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "example": "64d6f123456789abcdef1234"
+          },
+          "title": {
+            "type": "string",
+            "example": "Shopping List"
+          },
+          "content": {
+            "type": "string",
+            "example": "Milk, Bread, Eggs"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "NoteInput": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "example": "Shopping List"
+          },
+          "content": {
+            "type": "string",
+            "example": "Milk, Bread, Eggs"
+          }
+        },
+        "required": ["title", "content"]
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "Enter your JWT token in the format **Bearer &lt;token>**"
+      }
+    }
+  }
+}
